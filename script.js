@@ -33,7 +33,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Form submission
+/* Form submission
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {
     contactForm.addEventListener('submit', function(e) {
@@ -41,7 +41,41 @@ if (contactForm) {
         alert('Thank you for your message! I will get back to you soon.');
         this.reset();
     });
+}*/
+const contactForm = document.getElementById('contactForm');
+if (contactForm) {
+    contactForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const formData = {
+            name: this.name.value,
+            email: this.email.value,
+            subject: this.subject.value,
+            message: this.message.value
+        };
+
+        try {
+            const response = await fetch("http://localhost:5000/send", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert("✅ Your message has been sent successfully!");
+                this.reset();
+            } else {
+                alert("❌ Failed to send message. Please try again later.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("⚠️ Error sending message. Please try again later.");
+        }
+    });
 }
+
 
 // Add shadow to header on scroll
 window.addEventListener('scroll', () => {
